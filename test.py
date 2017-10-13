@@ -11,7 +11,7 @@ outfile = sys.argv[2]
 
 w = pd.read_csv("param.csv").values
 
-testdata = pd.read_csv('infile',header=None).values.tolist()
+testdata = pd.read_csv(infile,header=None).values.tolist()
 
 X = []
 
