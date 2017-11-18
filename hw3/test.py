@@ -37,7 +37,7 @@ for index in range(len(xdata)):
 xdata = np.stack(x,axis=0)
 xdata = np.expand_dims(xdata,axis=3)
 
-model = load_model("model_vgg.h5")
+model = load_model("model_vgg.h5?dl=1")
 
 res = model.predict(xdata)
 
