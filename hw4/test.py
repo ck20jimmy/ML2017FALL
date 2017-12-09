@@ -53,7 +53,6 @@ for st in test_x:
 maxlen = 60
 test_xdata = sequence.pad_sequences(test_xdata,maxlen)
 
-
 model = Sequential()
 
 batch = 2048
@@ -74,7 +73,6 @@ model.add(Dense(units=1,activation='sigmoid',kernel_regularizer=regularizers.l2(
 model.load_weights("bestmodel_weights.h5",by_name=True)
 
 ans = model.predict(test_xdata)
-
 
 output = open(outfile,'w+')
 output.write("id,label\n")
