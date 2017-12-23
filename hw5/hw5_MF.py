@@ -50,6 +50,28 @@ def user_input(user_path):
 	
 	return (n_user,userid_mapping),(n_feature,user_features)
 
+def train_input(train_path,n_movie,n_user,movieid_mapping,userid_mapping,split_ratio,movie_vecs,user_features):
+
+	raw_data = list(csv.reader(open(train_path,'r')))[1:]
+	split_num = int(len(raw_data)*split_ratio) + 850
+	random.shuffle(raw_data)
+	
+	val = raw_data[-split_num:]
+	train = raw_data[:-split_num]
+	
+	train_X = [line[:-1] for line in train]
+	train_Y = [line[-1] for line in train]
+	val_X = [line[:-1] for line in val]
+	val_Y = [line[-1] for line in val]
+
+	train_user = [userid_mapping[int(line[1])] for line in train_X]
+	train_movie = [movieid_mapping[int(line[2])] for line in train_X]
+
+	val_user = [userid_mapping[int(line[1])] for line in val_X]
+	val_movie = [movieid_mapping[int(line[2])] for line in val_X]
+
+	return (np.array(train_movie),np.array(train_user)),(np.array(val_movie),np.array(val_user)),(np.array(train_Y),np.array(val_Y))
+
 def test_input(test_path,movieid_mapping,userid_mapping,movie_vecs,user_features):
 
 	raw_data = list(csv.reader(open(test_path,'r')))[1:]
@@ -65,9 +87,9 @@ def rmse(y_true,y_pred):
 
 testfile = sys.argv[1]
 outfile = sys.argv[2]
-
 moviefile = sys.argv[3]
 userfile = sys.argv[4]
+
 
 split_ratio = 0.3
 input_dims = 25
@@ -101,13 +123,12 @@ r = keras.layers.Add()([r,user_bias,movie_bias])
 model = kmodels.Model([movie_input, user_input], r)
 model.summary()
 
+model.load_weights("MF_model.hdf5")
 
-model.load_weights("model_MF.hdf5")
-Y_pred = model.predict([test_movie,test_user],verbose=1)
+y_pred = model.predict([test_movie,test_user],verbose=1)
 
-out = open(outfile,'w')
+out = open(outfile,"w")
 out.write("TestDataID,Rating\n")
-for i in range(0,len(test_vecs)):
-	out.write(str(test_vecs[i][0])+","+str(max(1.0,min(Y_pred[i][0],5.0)))+"\n")
-
+for i in range(y_pred.shape[0]):
+	out.write(str(i+1)+','+str(max(1.0,min(y_pred[i][0],5.0)))+"\n")
 out.close()
