@@ -41,7 +41,7 @@ rec /= np.max(rec)
 rec = (rec*255).astype(np.uint8)
 rec = rec.reshape(600,600,3)
 
-outfile = "reconstruction6.jpg"
+outfile = "reconstruction.jpg"
 io.imsave(outfile,rec)
 
 
